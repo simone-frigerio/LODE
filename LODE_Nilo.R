@@ -2,12 +2,11 @@ library(KFAS)
 library(dplyr)
 library(DiceKriging)
 library(doParallel)
+
 lower <- c(0.1,0.1)
 upper <- c(2,2)
 n.trials<-50
 vallhs<-17
-y1<-numeric()
-risc<-numeric()
 
 #plot
 plot(Nile,main="Nilo",lwd=2,xlab="Anno",ylab="Portata fiume",cex.lab=1.3,cex.main=1.5)
