@@ -94,9 +94,9 @@ bic_kalman<-function(iniz_dom,l1,l2){
   up<-iniz_dom$up#dominio superiore
   low<-iniz_dom$low#dominio inferiore
   
-  foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,method = c("BFGS"),control = list(maxit = 50*2*n,factr=1e-10)),silent=TRUE)
+  foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,method = c("BFGS"),control = list(maxit = 100*n)),silent=TRUE)
   if (class(foo1) == "try-error"){
-    foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,lower=low,upper=up,method = c("L-BFGS-B"),control = list(maxit = 100*n)))
+    foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,lower=low,upper=up,method = c("L-BFGS-B"),control = list(maxit = 100*n,factr=1e-10)))
   }
   foo1$loglik <- make_mod(foo1$par, mod, TRUE)$kfs$logLik
   x<-foo1
