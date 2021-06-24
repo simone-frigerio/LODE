@@ -124,5 +124,5 @@ plot(Nile,cex.lab=1.3,cex.main=1.5,main="Nilo",xlab="Anno",ylab="Portata fiume")
 lines(yauxres,col="green4",lwd=2)
 
 #Guardo gli outlier trovati
-cat("Anno in cui è avvenuto il cambio di livello: ",time(Nile)[max+1],"\n") 
-cat("Anno in cui è presente un outlier additivo: ",time(Nile)[ndx_ao],"\n") 
+cat("Anno in cui Ã¨ avvenuto il cambio di livello: ",time(Nile)[max+1],"\n") 
+cat("Anno in cui Ã¨ presente un outlier additivo: ",time(Nile)[ndx_ao],"\n") 
