@@ -96,7 +96,7 @@ bic_kalman<-function(iniz_dom,l1,l2){
   
   foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,method = c("BFGS"),control = list(maxit = 50*2*n,factr=1e-10)),silent=TRUE)
   if (class(foo1) == "try-error"){
-    foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,lower=low,upper=up,method = c("L-BFGS-B"),control = list(maxit = 50*2*n,factr=1e-10)))
+    foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,lower=low,upper=up,method = c("L-BFGS-B"),control = list(maxit = 100*n)))
   }
   foo1$loglik <- make_mod(foo1$par, mod, TRUE)$kfs$logLik
   x<-foo1
@@ -195,7 +195,7 @@ stima_lode <- stima_lode*risc/5+y1
 #guardo gli outlier individuati
 w_ao<-which(abs(opt_par[2:(n+1)])>abs(opt_par[1]/100))
 w_level<-which(abs(opt_par[(n+3):(2*n+2)])>abs(opt_par[n+2]/100))
-cat("Anno in cui è avvenuto il cambio di livello: ",time(Nile)[w_level+1]) 
+cat("Anno in cui Ã¨ avvenuto il cambio di livello: ",time(Nile)[w_level+1]) 
 
 #plot dei risultati
 ylode<-ts(stima_lode,start = time(Nile)[1],frequency = 1)
