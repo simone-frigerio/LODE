@@ -44,7 +44,7 @@ if (length(ndx_ao)==0){
   }
 }
 
-#LS
+#Cambio di livello
 ndx <- which(abs(auxres_level[1:(n-1)]) > soglia) # salti 
 if (length(ndx)==0){
   shift=shift<-matrix(0,nrow=length(y),ncol=1)
@@ -79,6 +79,7 @@ if(length(ndx_ao)==0){
 
 fit2 <- fitSSM(model=mod2, inits=fit1$optim.out$par, updatefn=updtfn)
 
+#Non uso le condizioni iniziali diffuse se ridà il warning
 options(warn=2)
 ssmo2 <- try(KFS(fit2$model, smoothing="state"))
 if(class(ssmo2)=="try-error"){
@@ -104,7 +105,7 @@ if(class(ssmo2)=="try-error"){
 }
 
 options(warn=1)
-### Estrazione delle componenti
+#Estrazione delle componenti
 level <- ssmo2$alphahat[,"level"]
 if(length(max)==1){
   shift <- as.numeric(ssmo2$alphahat[,(length(ndx_ao)+1):(length(ndx_ao)+length(max))]) * t(as.matrix(fit2$model$Z[1,(length(ndx_ao)+1):(length(ndx_ao)+length(max)),]))
