@@ -2,19 +2,23 @@ library(KFAS)
 library(dplyr)
 library(DiceKriging)
 library(doParallel)
+library(lhs)
 
+#Iperettangolo dei lambda
 lower <- c(0.1,0.1)
 upper <- c(2,2)
+#Numero iterazioni della BO
 n.trials<-50
+#Numero di valori iniziali da generare con LHS
 vallhs<-17
 
-#plot
+#Plot
 plot(Nile,main="Nilo",lwd=2,xlab="Anno",ylab="Portata fiume",cex.lab=1.3,cex.main=1.5)
 
 y<-as.numeric(Nile)
 n<-length(y)
 
-#funzioni varie
+#Funzione obiettivo da minimizzare
 obj <- function(pars, mod, l1, l2) {
   n <- (length(pars) - 2) / 2
   mod$H[1, 1, ] <- array(pars[1]^2 + pars[2:(n + 1)]^2, c(1, 1, n))
@@ -23,6 +27,7 @@ obj <- function(pars, mod, l1, l2) {
     l1 * sum(abs(pars[2:(n + 1)])) +
     l2 * sum(abs(pars[(n + 3):(2*n + 2)]))
 }
+#Funzione che calcola lo smoother con le varianze aggiuntive
 make_mod <- function(pars, mod, kfs = TRUE) {
   n <- (length(pars) - 2) / 2
   mod$H[1, 1, ] <- array(pars[1]^2 + pars[2:(n + 1)]^2, c(1, 1, n))
@@ -30,7 +35,7 @@ make_mod <- function(pars, mod, kfs = TRUE) {
   if (kfs) return(list(mod = mod, kfs = KFS(mod, smoothing = "state")))
   list(mod = mod, kfs = NULL)
 }
-
+#Gradiente della funzione obiettivo
 grad <- function(pars, mod, l1, l2) {  
   n <- (length(pars) - 2) / 2
   mod$H[1, 1, ] <- array(pars[1]^2 + pars[2:(n + 1)]^2, c(1, 1, n))
@@ -48,14 +53,14 @@ grad <- function(pars, mod, l1, l2) {
   
   c(d_eps, v_eps, d_eta, v_eta)
 }
-
+#Log(verosimiglianza)
 loglik <- function(pars, mod) {
   mod$H[1, 1, ] <- pars[1]^2
   mod$Q[1, 1, ] <- pars[2]^2
   -KFS(mod, filtering = "none", smoothing = "none")$logLik
 }
 
-#riscaliamo la serie:
+#Riscaliamo la serie
 mod <- SSModel(y ~ SSMtrend(1, array(0, c(1, 1, n)), a1 = y[1], P1 = var(y), P1inf = 0),
                H = array(0, c(1, 1, n)))
 
@@ -65,8 +70,9 @@ risc<-abs(mle$par[1])
 y<-(y-y[1])*5/abs(mle$par[1])
 mod <- SSModel(y ~ SSMtrend(1, array(0, c(1, 1, n)),  a1 = y[1], P1 = var(y), P1inf = 0),
                H = array(0, c(1, 1, n)))
-#BO:
-#funzione che definisce valori iniziali e dominio
+
+#BO
+#Funzione che definisce valori iniziali e dominio
 fun_iniz_dom<-function(y){
   mle <- optim(c(sd(y)/4, sd(y)/4), loglik, mod = mod, method = "L-BFGS-B")
   mod_mle <- mod
@@ -85,7 +91,7 @@ fun_iniz_dom<-function(y){
 
 iniz_dom<-fun_iniz_dom(y)#rida i valori iniziale per mettere in input nella prossima funzione
 
-#funzione che calcola il BIC
+#Funzione che calcola il BIC
 bic_kalman<-function(iniz_dom,l1,l2){
   k1<-100#servono per definire il bic
   k2<-1
@@ -104,7 +110,7 @@ bic_kalman<-function(iniz_dom,l1,l2){
   return(foo1)
 }
 
-#funzione di acquisizione
+#Funzione di acquisizione
 CB <- function( x, gp, beta_=1, UCB=T ) {
   if( !is.matrix(x) )
     x <- data.frame( t(x) )
@@ -132,6 +138,7 @@ acquisition <- "CB"
 cat("\n> ***** Starting BO *****\n")
 n0 <- round(vallhs)
 
+#Generazione dei punti iniziali con LHS
 set.seed(1)
 design <- lhs::maximinLHS(n=n0,k=length(lower))
 for( i in 1:ncol(design) ){
@@ -159,14 +166,14 @@ while( nrow(design)<n.trials ) {
                 covtype=kernel, nugget.estim=T,
                 control=list(trace=0))
   
-  # optimize the acquisition function
-  fn.scale <- -1 # maximization of the acquisition function
+  #ottimizzazione della funzione di acquisizione
+  fn.scale <- -1 
   x0 <- NULL
   for( i in 1:ncol(design) )
     x0 <- c( x0, runif(1,lower[i],upper[i]) )
   
   opt.res <- optim( par=x0, fn=acq.fun, gr=NULL,
-                    gp=gp.fit, UCB=F, # <-- BIC is minimized
+                    gp=gp.fit, UCB=F, #BIC è minimizzato
                     lower=lower, upper=upper, control=list(trace=0,fnscale=fn.scale) )
   
   design <- rbind( design, opt.res$par )
@@ -176,7 +183,7 @@ while( nrow(design)<n.trials ) {
   
   tmp <- difftime( Sys.time(), tmp, units="secs" )
   bo.iter.elapsed <- c( bo.iter.elapsed, tmp )
-  print(nrow(design))
+  print(nrow(design))# print del numero dell'iterazione
 }
 cat("> BO time:",bo.elapsed+sum(bo.iter.elapsed),"seconds\n")
 
@@ -185,7 +192,7 @@ stopCluster(cl)
 
 tot_par<-tot_foo[which(names(tot_foo)=="par")]
 min<-which.min(y.bic)
-opt_par<-as.numeric(unlist(tot_par[6]))
+opt_par<-as.numeric(unlist(tot_par[min]))#parametri con cui si ottiene il BIC minore
 
 #eseguo il kalman smoother e riscalo i risultati
 stima_lode <- make_mod(opt_par, mod)$kfs$alphahat[, 1]
@@ -194,7 +201,7 @@ stima_lode <- stima_lode*risc/5+y1
 #guardo gli outlier individuati
 w_ao<-which(abs(opt_par[2:(n+1)])>abs(opt_par[1]/100))
 w_level<-which(abs(opt_par[(n+3):(2*n+2)])>abs(opt_par[n+2]/100))
-cat("Anno in cui è avvenuto il cambio di livello: ",time(Nile)[w_level+1]) 
+cat("Anno in cui è avvenuto il cambio di livello: ",time(Nile)[w_level+1],"\n") 
 
 #plot dei risultati
 ylode<-ts(stima_lode,start = time(Nile)[1],frequency = 1)
