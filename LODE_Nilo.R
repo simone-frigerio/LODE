@@ -166,17 +166,18 @@ while( nrow(design)<n.trials ) {
                 covtype=kernel, nugget.estim=T,
                 control=list(trace=0))
   
-  #ottimizzazione della funzione di acquisizione
   fn.scale <- -1 
   x0 <- NULL
   for( i in 1:ncol(design) )
     x0 <- c( x0, runif(1,lower[i],upper[i]) )
   
+  #Ottimizzazione della funzione di acquisizione
   opt.res <- optim( par=x0, fn=acq.fun, gr=NULL,
                     gp=gp.fit, UCB=F, #BIC è minimizzato
                     lower=lower, upper=upper, control=list(trace=0,fnscale=fn.scale) )
   
   design <- rbind( design, opt.res$par )
+  #Calcolo il BIC nel nuovo punto
   output<-bic_kalman( iniz_dom=iniz_dom, l1=opt.res$par[1], l2=opt.res$par[2] )
   tot_foo<-c(tot_foo,output)
   y.bic <- c( y.bic,output$bic) 
@@ -194,16 +195,16 @@ tot_par<-tot_foo[which(names(tot_foo)=="par")]
 min<-which.min(y.bic)
 opt_par<-as.numeric(unlist(tot_par[min]))#parametri con cui si ottiene il BIC minore
 
-#eseguo il kalman smoother e riscalo i risultati
+#Eseguo il kalman smoother e riscalo i risultati
 stima_lode <- make_mod(opt_par, mod)$kfs$alphahat[, 1]
 stima_lode <- stima_lode*risc/5+y1
 
-#guardo gli outlier individuati
+#Guardo gli outlier individuati
 w_ao<-which(abs(opt_par[2:(n+1)])>abs(opt_par[1]/100))
 w_level<-which(abs(opt_par[(n+3):(2*n+2)])>abs(opt_par[n+2]/100))
 cat("Anno in cui è avvenuto il cambio di livello: ",time(Nile)[w_level+1],"\n") 
 
-#plot dei risultati
+#Plot dei risultati
 ylode<-ts(stima_lode,start = time(Nile)[1],frequency = 1)
 plot(Nile,cex.lab=1.3,cex.main=1.5,main="Nilo",xlab="Anno",ylab="Portata fiume")
 lines(ylode,col="blue",lwd=2)
