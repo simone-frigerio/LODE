@@ -1,3 +1,4 @@
+#Esempio di serie LLT più stagionalità con outlier generati da mistura di gaussiane
 n<-100
 sig_eps <- runif(1,1,100)
 sig_eta <- runif(1,1,4)*sig_eps/2
@@ -24,5 +25,5 @@ stg<-stg*sig_eps
 mu <- cumsum(eta+b)+runif(1,-100*sig_eps,100*sig_eps)
 y <- mu + eps + stg
 
-plot(y,type="l",main="Esempio di LLT pi� stagionalit�")
+plot(y,type="l",main="Esempio di LLT più stagionalità")
 lines(mu,col="red")
