@@ -1,9 +1,9 @@
+#Simulazione di serie modellate con LLT e stagionalit√† ed analisi con LODE, auxres e KFS
+
 library(KFAS)
 library(dplyr)
 library(DiceKriging)
 library(doParallel)
-#Simulazione di serie modellate con LLT e stagionalit‡ ed
-#Analisi con LODE, auxres e KFS
 
 #simulazione ed analisi LODE----
 tim<-numeric()
@@ -26,7 +26,7 @@ vallhs<-17
 
 for(j in 1:2){
   set.seed(1152021+j)
-  if(j==91|j==2|j==8){#cambio alcune serie perchË danno problemi con KFS
+  if(j==91|j==2|j==8){#cambio alcune serie perch√® danno problemi con KFS
     set.seed(j+2)
   } 
   n<-100
@@ -308,7 +308,7 @@ for(i in 1:m){
   mod <- SSModel(y ~ SSMtrend(2, list(array(0, c(1, 1, (n))),0), a1 = c(y[1],0), P1 = c(var(y),0,0,var(y)), P1inf = c(0,0,0,0))+SSMseasonal(per,1,"dummy"),
                  H = array(0, c(1, 1, n)))
   
-  #faccio prima optim e poi fitSSM per comodit‡ nel ricopiare il codice
+  #faccio prima optim e poi fitSSM per comodit√† nel ricopiare il codice
   mle <- optim(c(sd(diff(y,differeces=per))/10, sd(diff(y,differeces=per))/10, sd(diff(diff(y,differeces=per)))/10, sd(diff(y,differeces=per))/10), loglik, mod = mod, method = "L-BFGS-B")
   mod_mle <- mod
   mod_mle$H[1, 1, ] <- mle$par[1]^2
