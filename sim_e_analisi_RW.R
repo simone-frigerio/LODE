@@ -1,9 +1,8 @@
+#Simulazione di serie modellate con un RW ed analisi con LODE, auxres e KFS
 library(KFAS)
 library(dplyr)
 library(DiceKriging)
 library(doParallel)
-#Simulazione di serie modellate con un RW ed
-#Analisi con LODE, auxres e KFS
 
 #simulazione ed analisi LODE ----
 opts1 <- vector(mode = "list")
@@ -30,7 +29,7 @@ vallhs<-17
 
 for(j in 1:1){
   set.seed(17052021+j)
-  if(j==34|j==102|j==236){#cambio alcune serie perchè danno problemi con KFS
+  if(j==34|j==102|j==236){#cambio alcune serie perchÃ¨ danno problemi con KFS
     set.seed(j)
   }
   n<-100
@@ -294,7 +293,7 @@ for(i in 1:m){
   mod1 <- SSModel(y ~ SSMtrend(1, array(0, c(1, 1, n)), a1 = y[1], P1 = var(y), P1inf = 0),
                   H = array(0, c(1, 1, n)))
   
-  #faccio prima optim e poi fitSSM per comodità nel ricopiare il codice
+  #faccio prima optim e poi fitSSM per comoditÃ  nel ricopiare il codice
   mle <- optim(c(sd(y)/4, sd(y)/4), loglik, mod = mod1, method = "L-BFGS-B")
   mod_mle <- mod1
   mod_mle$H[1, 1, ] <- mle$par[1]^2
