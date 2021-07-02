@@ -173,7 +173,7 @@ while( nrow(design)<n.trials ) {
   
   #Ottimizzazione della funzione di acquisizione
   opt.res <- optim( par=x0, fn=acq.fun, gr=NULL,
-                    gp=gp.fit, UCB=F, #BIC Ã¨ minimizzato
+                    gp=gp.fit, UCB=F, #BIC è minimizzato
                     lower=lower, upper=upper, control=list(trace=0,fnscale=fn.scale) )
   
   design <- rbind( design, opt.res$par )
@@ -202,10 +202,9 @@ stima_lode <- stima_lode*risc/5+y1
 #Guardo gli outlier individuati
 w_ao<-which(abs(opt_par[2:(n+1)])>abs(opt_par[1]/100))
 w_level<-which(abs(opt_par[(n+3):(2*n+2)])>abs(opt_par[n+2]/100))
-cat("Anno in cui Ã¨ avvenuto il cambio di livello: ",time(Nile)[w_level+1],"\n") 
+cat("Anno in cui è avvenuto il cambio di livello: ",time(Nile)[w_level+1],"\n") 
 
 #Plot dei risultati
 ylode<-ts(stima_lode,start = time(Nile)[1],frequency = 1)
 plot(Nile,cex.lab=1.3,cex.main=1.5,main="Nilo",xlab="Anno",ylab="Portata fiume")
 lines(ylode,col="blue",lwd=2)
-

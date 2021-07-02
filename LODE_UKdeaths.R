@@ -84,7 +84,6 @@ y<-(y-y[1])*5/abs(mle$par[1])
 mod <- SSModel(y ~ SSMtrend(2, list(array(0, c(1, 1, (n))),0), a1 = c(y[1],0), P1 = c(var(y),0,0,var(y)), P1inf = c(0,0,0,0))+SSMseasonal(per,1,"dummy"),
                H = array(0, c(1, 1, n)))
 mle <- optim(c(c(sd(diff(y,differeces=per))/10, sd(diff(y,differeces=per))/10, sd(diff(diff(y,differeces=per)))/10, sd(diff(y,differeces=per))/10)), loglik, mod = mod, method = "L-BFGS-B")
-print(abs(mle$par[1]))
 
 #BO
 #Funzione che definisce valori iniziali e dominio
@@ -106,7 +105,7 @@ fun_iniz_dom<-function(y){
   return(newList)
 }
 
-iniz_dom<-fun_iniz_dom(y)#rida i valori iniziale per mettere in input nella prossima funzione
+iniz_dom<-fun_iniz_dom(y)#rida i valori iniziali da mettere in input nella prossima funzione
 
 #Funzione che calcola il BIC
 bic_kalman<-function(iniz_dom,l1,l2){
@@ -119,7 +118,6 @@ bic_kalman<-function(iniz_dom,l1,l2){
   foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,method = c("BFGS"),control = list(maxit = 50*2*n,factr=1e-10)),silent=TRUE)
   if (class(foo1) == "try-error"){
     foo1 <- try(optim(init, obj, grad,mod = mod, l1 = l1, l2 = l2,lower=low,upper=up,method = c("L-BFGS-B"),control = list(maxit = 50*2*n,factr=1e-10)))
-    print("L-BFGS-B")   
   }
   foo1$loglik <- make_mod(foo1$par, mod, TRUE)$kfs$logLik
   x<-foo1
