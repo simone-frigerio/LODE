@@ -1,7 +1,9 @@
 # LODE
 Nella cartella sono presenti alcuni script usati durante la tesi, per lo sviluppo del metodo LODE.
 
-I file LODE_rw e LODE_llt_stg contengono le funzioni per analizzare, col metodo LODE, un qualunque serie storica, modellandola con un random walk o un local linear trend più stagionalità. In fondo ai medesimi file è riportato un veloce esempio per il loro utilizzo.
+I file LODE_rw e LODE_llt_stg contengono le funzioni per analizzare, col metodo LODE, un qualunque serie storica, modellandola con un random walk o un local linear trend più stagionalità e ricercando valori anomali additivi e cambi di livello. In fondo ai medesimi file è riportato un veloce esempio per il loro utilizzo.
+
+Il file LODE_stg contiene la funzione per analizzare, col metodo LODE, un qualunque serie storica, modellandola con un random walk più stagionalità e ricercando cambi di stagionalità. In fondo al file è riportato un veloce esempio per il suo utilizzo.
 
 I file LODE_Nilo e LODE_UKdeaths analizzano le serie serie storiche della portata annuale d'acqua del Nilo e del numero di guidatori morti o gravemente feriti in UK.
 
