@@ -5,6 +5,8 @@ I file LODE_rw e LODE_llt_stg contengono le funzioni per analizzare, col metodo 
 
 Il file LODE_stg contiene la funzione per analizzare, col metodo LODE, un qualunque serie storica, modellandola con un random walk più stagionalità e ricercando cambi di stagionalità. In fondo al file è riportato un veloce esempio per il suo utilizzo.
 
+Il file LODE_integrated_rw contiene la funzione per analizzare, col metodo LODE, un qualunque serie storica, modellandola con un random walk integrato e ricercando cambi di pendenza. In fondo al file è riportato un veloce esempio per il suo utilizzo.
+
 I file LODE_Nilo e LODE_UKdeaths analizzano le serie serie storiche della portata annuale d'acqua del Nilo e del numero di guidatori morti o gravemente feriti in UK.
 
 I file sim_e_analisi_rw e sim_e_analisi_llt_stg permettono la riproduzione dei risultati delle simulazioni presentate nella tesi. Rispettivamente per l'analisi di RW con outlier provenienti da misutra di gaussiane e di serie modellate con un local linear trend più stagionalità.
